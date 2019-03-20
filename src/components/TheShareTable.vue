@@ -3,12 +3,13 @@
     <table border="1">
       <thead>
       <tr>
-        <td v-for="j in headerAry.length" :key="j">{{headerAry[j-1]}}</td>
+        <td v-for="j in headerAry.length" :key="j" @click="getTableDataDesc(j-2)">{{headerAry[j-1]}}</td>
       </tr>
       </thead>
       <tbody>
       <tr v-for="i in tableData.length" :key="i">
-        <td v-for="j in tableData[i-1].length" :key="j">{{tableData[i-1][j-1]}}</td>
+        <td v-for="j in tableData[i-1].length > ROWS ? ROWS : tableData[i-1].length" :key="j"
+            :style="{color: colorAry[4]}">{{tableData[i-1][j-1]}}</td>
       </tr>
       </tbody>
     </table>
@@ -26,16 +27,35 @@ export default {
       COLUMNS: 16,
       ROWS: 100,
       tableData: [0],
+      tableColorIndex: [0],
+      isAscAry: [],
+      levelOneAry: [],
+      levelTwoAry: [],
+      colorAry: ['red', 'orange', 'yellow', 'blue', '#e1e1e1'],
       headerAry: [...leftAry, ...rightAry]
     }
   },
   mounted () {
-    this.getTableData(this)
-    console.log(this.tableData)
+    this.getTableData(this, 'rate1-100')
+    this.initData()
+    // console.log(this.tableData)
   },
   methods: {
-    getTableData (host) {
-      this.axios.get('/exchange-rate').then(function (res) {
+    initData () {
+      this.tableData.forEach(ary => {
+        console.log(ary)
+        // ary.forEach(aryChild => {
+        //   console.log(aryChild)
+        // })
+      })
+    },
+    getTableDataDesc (index) {
+      let param = 'rate' + index + '-' + this.ROWS
+      console.log(param)
+      // this.getTableData(this, param)
+    },
+    getTableData (host, param) {
+      this.axios.get('/exchangeRate/' + param).then(function (res) {
         host.tableData = []
         res.data.forEach(element => {
           let rowData = []
@@ -63,7 +83,6 @@ export default {
     border: 1px solid #e1e1e1;
   }
   td {
-    padding-left: 8px;
-    padding-right: 8px;
+    padding: 8px;
   }
 </style>

@@ -9,8 +9,7 @@ const CopyWebpackPlugin = require('copy-webpack-plugin')
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
-const exchageRate =  require('../server/lib/read-mysql/read-exchange-rate')
-
+const readExchange = require('../server/lib/read-mysql/read-exchange-rate')
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -25,11 +24,11 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   // these devServer options should be customized in /config/index.js
   devServer: {
     before(app) {
-      app.get('/exchange-rate', (req, res) => {
-        exchageRate.readExchangeRate('rate1','100', function(data) {
+      app.get('/exchangeRate/*', (req, res) => {
+        let params = req.params[0].split('-')
+        readExchange.readExchangeRateLimit(params[0],params[1], function(data) {
             res.send(data)
           })
-          // res.data = 'hello'
       })
     },
     clientLogLevel: 'warning',
