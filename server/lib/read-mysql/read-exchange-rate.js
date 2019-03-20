@@ -93,7 +93,7 @@ function readExchangeRateAvgLimit (member, limit, callback) {
 
 function readExchangeRateLevel (callback) {
   let ary = ['rate1', 'rate2', 'rate3', 'rate4', 'rate5', 'rate6', 'rate7', 'rate8', 'rate9',
-    'rate10', 'rate15', 'rate20', 'rate30', 'rate40', 'rate50', 'rate60']
+    'rate10', 'rate15', 'rate20', 'rate25', 'rate30', 'rate40', 'rate50', 'rate60']
   let promiseAll = []
   ary.forEach(value => {
     promiseAll.push(createReadLevelPromiseAll(value))

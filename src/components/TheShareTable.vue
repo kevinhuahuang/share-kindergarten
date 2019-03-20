@@ -24,37 +24,42 @@ export default {
   name: 'TheShareTable',
   data () {
     return {
-      COLUMNS: 16,
       ROWS: 100,
-      tableData: [0],
-      tableColorIndex: [0],
+      tableData: [[]], // 二维数组，如果不这样创建，在接下的forEach嵌套使用中的第二次forEach将报错
+      tableColorIndex: [[]],
       isAscAry: [],
       levelData: [],
-      colorAry: ['red', 'orange', 'yellow', 'blue', '#e1e1e1'],
+      colorAry: ['#e11221', '#e1400c', '#e19028', '#e1b767', '#e1e1e1'],
       headerAry: [...leftAry, ...rightAry]
     }
   },
   mounted () {
+    // :style="{color: tableColorIndex[i-1][j-1] ? colorAry[tableColorIndex[i-1][j-1]] : colorAry[4]}"
     this.getLevelValueData(this)
     this.getTableData(this, 'rate1-100')
-    this.initData()
     // console.log(this.tableData)
   },
   methods: {
     initData () {
-      // console.log(this.tableData)
+      // 创建一个19*100(tableData.length * headerAry.length)的二维数组
+      this.tableColorIndex = Array.from({length: this.tableData.length}, () => Array.from({length: this.headerAry.length}, () => 0))
+      // console.log(this.tableColorIndex)
       this.tableData.forEach((aryChild, i) => {
-        let aryTemp = aryChild
-        aryTemp.forEach((value, j) => { // 直接使用aryChild.forEach会报错
-          this.setTableColorIndexAry(value, i, j)
+        aryChild.forEach((value, j) => { // 直接使用aryChild.forEach会报错
+          if (j > 1) {
+            this.setTableColorIndexAry(value, i, j)
+          }
         }, this)
       })
+      // console.log(this.tableColorIndex)
     },
     setTableColorIndexAry (value, i, j) {
+      // console.log(j + ' ' + i)
       this.tableColorIndex[i][j] = this.setTableColorIndex(value, j)
     },
     setTableColorIndex (value, index) {
-      let labelAry = this.levelData[index]
+      // console.log(this.levelData)
+      let labelAry = this.levelData[index - 2]
       let result = 0
       switch (true) { // 注意此处值为true，不是value
         case value > labelAry[0]:
