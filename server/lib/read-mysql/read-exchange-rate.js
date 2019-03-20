@@ -91,11 +91,51 @@ function readExchangeRateAvgLimit (member, limit, callback) {
   })
 }
 
+function readExchangeRateLevel (callback) {
+  let ary = ['rate1', 'rate2', 'rate3', 'rate4', 'rate5', 'rate6', 'rate7', 'rate8', 'rate9',
+    'rate10', 'rate15', 'rate20', 'rate30', 'rate40', 'rate50', 'rate60']
+  let promiseAll = []
+  ary.forEach(value => {
+    promiseAll.push(createReadLevelPromiseAll(value))
+  })
+  Promise.all([...promiseAll]).then(result => {
+    callback(result)
+  })
+}
+
 module.exports = {
   readExchangeRate,
   readExchangeRateLimit,
   readExchangeRateMax,
   readExchangeRateMin,
   readExchangeRateAverage,
-  readExchangeRateAvgLimit
+  readExchangeRateAvgLimit,
+  readExchangeRateLevel
+}
+
+// ====================================================================
+// 以下三个函数为readExchangeRateLevel服务
+function createReadLevelPromise (member, limit) { // 返回一个promise
+  return new Promise(resolve => {
+    readExchangeRateAvgLimit(member, limit, data => {
+      resolve(data)
+    })
+  })
+}
+
+function createReadLevelPromiseAry (member) { // 返回一个由promise组成的数组
+  let ary = [10, 20, 30, 40]
+  let result = []
+  ary.forEach(value => {
+    result.push(createReadLevelPromise(member, value))
+  })
+  return result
+}
+
+function createReadLevelPromiseAll (member) { // 返回一个执行promise.all的promise
+  return new Promise(resolve => {
+    Promise.all([...createReadLevelPromiseAry(member)]).then(result => {
+      resolve(result)
+    })
+  })
 }

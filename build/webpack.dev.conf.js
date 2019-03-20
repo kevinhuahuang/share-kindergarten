@@ -30,6 +30,11 @@ const devWebpackConfig = merge(baseWebpackConfig, {
             res.send(data)
           })
       })
+      app.get('/exchangeValueLevel', (req, res) => {
+        readExchange.readExchangeRateLevel(function(data) {
+          res.send(data)
+        })
+      })
     },
     clientLogLevel: 'warning',
     historyApiFallback: {

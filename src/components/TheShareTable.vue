@@ -9,7 +9,7 @@
       <tbody>
       <tr v-for="i in tableData.length" :key="i">
         <td v-for="j in tableData[i-1].length > ROWS ? ROWS : tableData[i-1].length" :key="j"
-            :style="{color: colorAry[4]}">{{tableData[i-1][j-1]}}</td>
+            :style="{color: tableColorIndex[i-1][j-1] ? colorAry[tableColorIndex[i-1][j-1]] : colorAry[4]}">{{tableData[i-1][j-1]}}</td>
       </tr>
       </tbody>
     </table>
@@ -29,30 +29,57 @@ export default {
       tableData: [0],
       tableColorIndex: [0],
       isAscAry: [],
-      levelOneAry: [],
-      levelTwoAry: [],
+      levelData: [],
       colorAry: ['red', 'orange', 'yellow', 'blue', '#e1e1e1'],
       headerAry: [...leftAry, ...rightAry]
     }
   },
   mounted () {
+    this.getLevelValueData(this)
     this.getTableData(this, 'rate1-100')
     this.initData()
     // console.log(this.tableData)
   },
   methods: {
     initData () {
-      this.tableData.forEach(ary => {
-        console.log(ary)
-        // ary.forEach(aryChild => {
-        //   console.log(aryChild)
-        // })
+      // console.log(this.tableData)
+      this.tableData.forEach((aryChild, i) => {
+        let aryTemp = aryChild
+        aryTemp.forEach((value, j) => { // 直接使用aryChild.forEach会报错
+          this.setTableColorIndexAry(value, i, j)
+        }, this)
+      })
+    },
+    setTableColorIndexAry (value, i, j) {
+      this.tableColorIndex[i][j] = this.setTableColorIndex(value, j)
+    },
+    setTableColorIndex (value, index) {
+      let labelAry = this.levelData[index]
+      let result = 0
+      switch (true) { // 注意此处值为true，不是value
+        case value > labelAry[0]:
+          result = 4
+          break
+        case value > labelAry[1]:
+          result = 3
+          break
+        case value > labelAry[2]:
+          result = 2
+          break
+        case value > labelAry[3]:
+          result = 1
+          break
+      }
+      return result
+    },
+    getLevelValueData (host) {
+      this.axios.get('/exchangeValueLevel').then(function (res) {
+        host.levelData = res.data
       })
     },
     getTableDataDesc (index) {
       let param = 'rate' + index + '-' + this.ROWS
-      console.log(param)
-      // this.getTableData(this, param)
+      this.getTableData(this, param)
     },
     getTableData (host, param) {
       this.axios.get('/exchangeRate/' + param).then(function (res) {
@@ -67,6 +94,7 @@ export default {
           })
           host.tableData.push(rowData)
         })
+        host.initData()
       })
     }
   }
