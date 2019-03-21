@@ -27,4 +27,3 @@ function test () {
   console.log(levelData)
 }
 
-test()
