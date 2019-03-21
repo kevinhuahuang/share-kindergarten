@@ -24,7 +24,7 @@ export default {
   name: 'TheShareTable',
   data () {
     return {
-      ROWS: 30,
+      ROWS: 30, // 设置100行时，显示切换较慢
       headerClickAry: [],
       tableData: [[]], // 二维数组，如果不这样创建，在接下的forEach嵌套使用中的第二次forEach将报错 长度100，子数组长度19
       tableColorIndex: [[]],
@@ -45,11 +45,13 @@ export default {
   methods: {
     initData () {
       this.tableData.forEach((aryChild, i) => { // 数组长度100，子数组长度19
-        aryChild.forEach((value, j) => { // 直接使用aryChild.forEach会报错
-          if (j >= leftAry.length) { // 从第三列开始 0，1，2（开始）
-            this.setTableColorIndexAry(value, i, j)
-          }
-        }, this)
+        if (i < this.ROWS) {
+          aryChild.forEach((value, j) => { // 直接使用aryChild.forEach会报错
+            if (j >= leftAry.length) { // 从第三列开始 0，1，2（开始）
+              this.setTableColorIndexAry(value, i, j)
+            }
+          }, this)
+        }
       })
       // console.log(this.tableColorIndex)
     },

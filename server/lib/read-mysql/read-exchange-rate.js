@@ -103,6 +103,31 @@ function readExchangeRateLevel (callback) {
   })
 }
 
+readExchangeRateRanking('rate1', '000669', data => {
+  console.log(data)
+})
+
+function readExchangeRateRanking (member, code, callback) {
+  sqlSentence = 'SELECT code FROM exchange_rate ORDER BY ' + member + ' DESC '
+  connection.query(sqlSentence, function (err, result) {
+    if (err) {
+      console.log(sqlSentence)
+      return 0
+    } else {
+      // let index = 0
+      let aryTemp = []
+      result.forEach(obj => {
+        aryTemp.push(Object.values(obj)[0])
+      })
+      let index = aryTemp.findIndex((element) => {
+        return element === code
+      })
+      ++index
+      callback(index)
+    }
+  })
+}
+
 module.exports = {
   readExchangeRate,
   readExchangeRateLimit,
