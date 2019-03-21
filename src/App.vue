@@ -1,14 +1,15 @@
 <template>
   <div id="app">
-    <TheShareTable></TheShareTable>
+    <TheChangeRateTable></TheChangeRateTable>
   </div>
 </template>
 
 <script>
-import TheShareTable from './components/TheShareTable'
+import TheExchangeRateTable from './components/TheExchangeRateTable'
+import TheChangeRateTable from './components/TheChangeRateTable'
 export default {
   name: 'App',
-  components: {TheShareTable}
+  components: {TheChangeRateTable, TheExchangeRateTable}
 }
 </script>
 

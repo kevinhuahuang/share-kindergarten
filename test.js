@@ -14,6 +14,17 @@ function switchTest (value) {
   return result
 }
 
-console.log(switchTest(6))
 
+function test () {
+  let row = 17
+  let column = 4
+  let levelData = Array.from({length: row}, () => Array.from({length: column}, () => 0))
+  levelData.forEach((ary, i) => {
+    ary.forEach((value, j) => {
+      levelData[i][j] = ((i + 1) * 10) - (j + 2) * (i + 1) + 2
+    })
+  })
+  console.log(levelData)
+}
 
+test()

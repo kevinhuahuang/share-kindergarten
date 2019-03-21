@@ -10,6 +10,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin')
 const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 const readExchange = require('../server/lib/read-mysql/read-exchange-rate')
+const readChange = require('../server/lib/read-mysql/read-change-rate')
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -24,6 +25,12 @@ const devWebpackConfig = merge(baseWebpackConfig, {
   // these devServer options should be customized in /config/index.js
   devServer: {
     before(app) {
+      app.get('/changeRate/*', (req, res) => {
+        let params = req.params[0].split('-')
+        readChange.readChangeRateLimit(params[0],params[1], function(data) {
+          res.send(data)
+        })
+      })
       app.get('/exchangeRate/*', (req, res) => {
         let params = req.params[0].split('-')
         readExchange.readExchangeRateLimit(params[0],params[1], function(data) {

@@ -103,10 +103,6 @@ function readExchangeRateLevel (callback) {
   })
 }
 
-readExchangeRateRanking('rate1', '000669', data => {
-  console.log(data)
-})
-
 function readExchangeRateRanking (member, code, callback) {
   sqlSentence = 'SELECT code FROM exchange_rate ORDER BY ' + member + ' DESC '
   connection.query(sqlSentence, function (err, result) {
@@ -135,7 +131,8 @@ module.exports = {
   readExchangeRateMin,
   readExchangeRateAverage,
   readExchangeRateAvgLimit,
-  readExchangeRateLevel
+  readExchangeRateLevel,
+  readExchangeRateRanking
 }
 
 // ====================================================================

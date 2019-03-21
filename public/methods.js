@@ -2,7 +2,7 @@ function multiArrayAsc (ary, index) { // index start from 0
   let aryObject = ary.map((aryChild, i) => {
     return {value: aryChild[index], index: i}
   })
-  aryObject.sort(function (a, b) {
+  aryObject.sort(function (a, b) { // 对象也有sort方法
     return a.value - b.value
   })
   return aryObject.map(obj => {
