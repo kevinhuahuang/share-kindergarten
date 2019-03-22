@@ -30,54 +30,48 @@ const connectionData = mysql.createConnection({
 const indexAry = [5, 10, 30, 60, 120, 240, 480, 720]
 
 let sqlSentence
-let writeData
+let writeData = []
 function writeChangeRate (data) {
-  sqlSentence = 'DROP TABLE IF EXISTS close'
+  sqlSentence = 'DROP TABLE IF EXISTS close_min'
 
   connection.query(sqlSentence, function (err) {
     if (err) {
       console.log('DROP TABLE FAIL', err.message)
+    } else {
+      console.log('删除数据库成功')
     }
   })
 
-  sqlSentence = 'CREATE TABLE IF NOT EXISTS close' +
+  sqlSentence = 'CREATE TABLE IF NOT EXISTS close_min' +
     ' (code VARCHAR(10) PRIMARY KEY, name VARCHAR(20), start_date CHAR(10), end_date CHAR(10), day1 FLOAT, ' +
-    'day5_min FLOAT, day10_min FLOAT, day30_min FLOAT, day60_min FLOAT, day120_min FLOAT, day240_min FLOAT, day480_min FLOAT, day720_min, days_min FLOAT, ' +
-    'day5_avg FLOAT, day10_avg FLOAT, day30_avg FLOAT, day60_avg FLOAT, day120_avg FLOAT, day240_avg FLOAT, day480_avg FLOAT, day720_avg, days_avg FLOAT, ' +
-    'day5_max FLOAT, day10_max FLOAT, day30_max FLOAT, day60_max FLOAT, day120_max FLOAT, day240_max FLOAT, day480_max FLOAT, day720_max, days_max FLOAT' +
+    'day5 FLOAT, day10 FLOAT, day30 FLOAT, day60 FLOAT, day120 FLOAT, day240 FLOAT, day480 FLOAT, day720 FLOAT, days FLOAT, ' +
+    'day5_rate FLOAT, day10_rate FLOAT, day30_rate FLOAT, day60_rate FLOAT, day120_rate FLOAT, day240_rate FLOAT, day480_rate FLOAT, day720_rate FLOAT, days_rate FLOAT ' +
     ')charset utf8 collate utf8_general_ci'
 
   connection.query(sqlSentence, function (err) {
     if (err) {
-      console.log('创建数据库错误' + err.message)
-      // console.log(sqlSentence)
+      console.log('创建数据库错误: ' + err.message)
+      console.log(sqlSentence)
     } else {
       console.log('创建数据库成功')
+      sqlSentence = 'INSERT INTO close_min' +
+        ' (code, name, start_date, end_date, day1, ' +
+        'day5, day10, day30, day60, day120, day240, day480, day720, days, ' +
+        'day5_rate, day10_rate, day30_rate, day60_rate, day120_rate, day240_rate, day480_rate, day720_rate, days_rate' +
+        ') VALUES ?;'
+
+      // console.log('长度：' + data.length + ' : ' + data[0].length)
+      // console.log(data[0])
+      connection.query(sqlSentence, [data], function (err, rows, fields) {
+        if (err) {
+          console.log('数据写入出错：' + err.message)
+          console.log(sqlSentence)
+        } else {
+          console.log('数据写入完成')
+        }
+      })
     }
   })
-
-  sqlSentence = 'INSERT INTO change_rate' +
-    ' (code, name, start_date, end_date, day1' +
-    'day5_min, day10_min, day20_min, day30_min, day60_min, day120_min, day240_min, day480_min, day720_min, days_min, ' +
-    'day5_avg, day10_avg, day20_avg, day30_avg, day60_avg, day120_avg, day240_avg, day480_avg, day720_avg, days_avg, ' +
-    'day5_max, day10_max, day20_max, day30_max, day60_max, day120_max, day240_max, day480_max, day720_max, days_max' +
-    ') VALUES ?;'
-
-  connection.query(sqlSentence, [data], function (err, rows, fields) {
-    if (err) {
-      console.log('数据写入出错：' + err.message)
-    } else {
-      console.log('数据写入完成')
-    }
-  })
-}
-
-function getAverageFromAry (ary) {
-  let sum = 0
-  ary.forEach(value => {
-    sum += value
-  })
-  return Math.floor(sum / ary.length * 100) / 100
 }
 
 function getCloseDays (shareAry, callback) {
@@ -90,32 +84,34 @@ function getCloseDays (shareAry, callback) {
       return 0
     } else {
       let aryTemp = []
+      let aryMin = []
+      let aryRate = []
       let aryRes = []
+      let temp
       result.forEach(obj => {
         aryTemp.push(Object.values(obj)[0])
       })
+      aryRes.push(...shareAry)
+      aryRes.push(aryTemp[0])
       indexAry.forEach(value => {
-        aryRes.push(Math.min(...aryTemp.slice(0, value)))
-        aryRes.push(getAverageFromAry(aryTemp.slice(0, 3)))
-        aryRes.push(Math.max(...aryTemp.slice(0, value)))
+        temp = Math.min(...aryTemp.slice(0, value))
+        aryMin.push(temp)
+        aryRate.push(Math.floor(aryTemp[0] / temp * 100) / 100)
       })
-      aryRes.push(Math.min(...aryTemp))
-      aryRes.push(getAverageFromAry(aryTemp))
-      aryRes.push(Math.max(...aryTemp))
+      temp = Math.min(...aryTemp)
+      aryMin.push(temp)
+      aryRate.push(Math.floor(aryTemp[0] / temp * 100) / 100)
       // console.log(aryRes)
-      writeData.push(aryRes)
+      writeData.push([...aryRes, ...aryMin, ...aryRate])
       callback(null)
     }
   })
 }
 
-// getCloseDays(['000001', 'WHAT'], data => {
-//   console.log(data)
-// })
-
 function getCloseArray (shares) {
   let j = -1
   let length = shares.length
+  // length = 3
   console.log('change-rate写入操作，请稍等')
   writeData = []
   async.whilst(
@@ -126,6 +122,7 @@ function getCloseArray (shares) {
 
     function (callback) {
       getCloseDays(shares[j], callback)
+      // console.log(j, callback)
     },
 
     function (err, result) {
@@ -133,8 +130,8 @@ function getCloseArray (shares) {
         console.log('出错了')
         console.log(err.message)
       } else {
-        console.log('数据长度：' + result.length)
-        writeChangeRate(result)
+        console.log('数据长度：' + writeData.length)
+        writeChangeRate(writeData)
       }
     }
   )
@@ -158,10 +155,6 @@ function getShareLive () { // 获取当前有效的share，已停止的share将�
     for (let i = 0; i < result.length; i++) {
       shareLive.push([result[i].code, result[i].name, result[i].start_date, result[i].end_date])
     }
-    // console.log(shareLive)
-
-    // shareLive.sort(sortAsc);  //not work ,shareLive is multiple array
-    // console.log(shareLive);
     ep.emit('getShareLive', shareLive)
   })
 }

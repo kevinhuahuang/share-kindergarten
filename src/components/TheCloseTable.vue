@@ -3,9 +3,9 @@
 </template>
 
 <script>
-    export default {
-        name: "TheCloseTable"
-    }
+export default {
+  name: 'TheCloseTable'
+}
 </script>
 
 <style scoped>

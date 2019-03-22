@@ -111,14 +111,12 @@ function getExchangeRateDays (shareAry, callback) {
   })
 }
 
-let rowDataArray = []
 function getExchangeDataArray (shares) {
   let j = -1
   let length = shares.length
   // length = 3
   writeData = []
 
-  rowDataArray.length = 0
   async.whilst(
     function () {
       j++
@@ -137,7 +135,6 @@ function getExchangeDataArray (shares) {
         console.log('写入数据库')
         console.log('数据长度：' + writeData.length)
         writeExchangeRate(writeData)
-        // console.log(' get rowDataArray finished ')
       }
     }
   )
