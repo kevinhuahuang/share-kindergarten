@@ -1,15 +1,21 @@
 <template>
   <div id="app">
-    <TheChangeRateTable></TheChangeRateTable>
+    <!--<TheChangeRateTable></TheChangeRateTable>-->
+    <!--<TheTableCloseMin></TheTableCloseMin>-->
+    <!--<the-table-close-max></the-table-close-max>-->
+    <the-table-close-average></the-table-close-average>
   </div>
 </template>
 
 <script>
 import TheExchangeRateTable from './components/TheExchangeRateTable'
 import TheChangeRateTable from './components/TheChangeRateTable'
+import TheTableCloseMin from './components/TheTableCloseMin'
+import TheTableCloseMax from './components/TheTableCloseMax'
+import TheTableCloseAverage from './components/TheTableCloseAverage'
 export default {
   name: 'App',
-  components: {TheChangeRateTable, TheExchangeRateTable}
+  components: {TheTableCloseAverage, TheTableCloseMax, TheTableCloseMin, TheChangeRateTable, TheExchangeRateTable}
 }
 </script>
 

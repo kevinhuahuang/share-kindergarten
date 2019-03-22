@@ -11,6 +11,9 @@ const FriendlyErrorsPlugin = require('friendly-errors-webpack-plugin')
 const portfinder = require('portfinder')
 const readExchange = require('../server/lib/read-mysql/read-exchange-rate')
 const readChange = require('../server/lib/read-mysql/read-change-rate')
+const readCloseMin = require('../server/lib/read-mysql/read-close-min')
+const readCloseMax = require('../server/lib/read-mysql/read-close-max')
+const readCloseAverage = require('../server/lib/read-mysql/read-close-average')
 
 const HOST = process.env.HOST
 const PORT = process.env.PORT && Number(process.env.PORT)
@@ -39,6 +42,24 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       })
       app.get('/exchangeValueLevel', (req, res) => {
         readExchange.readExchangeRateLevel(function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/closeMin/*', (req, res) => {
+          let params = req.params[0].split('-')
+          readCloseMin.readCloseMinLimit(params[0],params[1], function(data) {
+            res.send(data)
+        })
+      })
+      app.get('/closeMax/*', (req, res) => {
+        let params = req.params[0].split('-')
+        readCloseMax.readCloseMaxLimit(params[0],params[1], function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/closeAverage/*', (req, res) => {
+        let params = req.params[0].split('-')
+        readCloseAverage.readCloseAverageLimit(params[0],params[1], function(data) {
           res.send(data)
         })
       })

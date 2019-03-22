@@ -27,3 +27,16 @@ function test () {
   console.log(levelData)
 }
 
+function test1 () {
+  let row = 17
+  let column = 4
+  let levelData = Array.from({length: row}, () => Array.from({length: column}, () => 0))
+  levelData.forEach((ary, i) => {
+    ary.forEach((value, j) => {
+      levelData[i][j] = Math.floor((1.55 + i * 0.1  - j * 0.09) * 100) / 100
+    })
+  })
+  console.log(levelData)
+}
+
+test1()

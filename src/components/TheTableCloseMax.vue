@@ -3,7 +3,7 @@
     <table border="1">
       <thead>
       <tr>
-        <td v-for="j in headerAry.length" :key="j" @click="getTableDataDesc(j)" :style="{backgroundColor: headerClickAry[j-1] ? '#4a1cb6' : '#2b2b2b'}">{{headerAry[j-1]}}</td>
+        <td v-for="j in headerAry.length" :key="j" @click="getTableDataDesc(j)" :style="{backgroundColor: headerClickAry[j-1] ? '#4a1cb6' : '#2b2b2b'}">{{headerAry[j-1].replace('_rate', '')}}</td>
       </tr>
       </thead>
       <tbody>
@@ -18,13 +18,12 @@
 
 <script>
 const leftAry = ['code', 'end_date']
-const rightAry = ['rate1', 'rate2', 'rate3', 'rate4', 'rate5', 'rate6', 'rate7', 'rate8',
-  'rate9', 'rate10', 'rate15', 'rate20', 'rate25', 'rate30', 'rate40', 'rate50', 'rate60']
+const rightAry = ['day5_rate', 'day10_rate', 'day30_rate', 'day60_rate', 'day120_rate', 'day240_rate', 'day480_rate', 'day720_rate', 'days_rate']
 export default {
-  name: 'TheCloseTable',
+  name: 'TheTableCloseMax',
   data () {
     return {
-      ROWS: 30, // 设置100行时，显示切换较慢
+      ROWS: 50, // 设置100行时，显示切换较慢
       headerClickAry: [],
       tableData: [[]], // 二维数组，如果不这样创建，在接下的forEach嵌套使用中的第二次forEach将报错 长度100，子数组长度19
       tableColorIndex: [[]],
@@ -39,8 +38,8 @@ export default {
     // 创建一个100*19(tableData.length * headerAry.length)的二维数组[列][行]
     this.tableColorIndex = Array.from({length: this.ROWS}, () => Array.from({length: this.headerAry.length}, () => 0))
     this.headerClickAry = Array.from({length: this.headerAry.length}, () => false)
-    this.getLevelValueData(this)
-    this.getTableData(this, 'rate1-100')
+    this.initTableColorIndex()
+    this.getTableData(this, 'day5_rate-100')
   },
   methods: {
     initData () {
@@ -54,6 +53,17 @@ export default {
         }
       })
       // console.log(this.tableColorIndex)
+    },
+    initTableColorIndex () {
+      let row = rightAry.length
+      let column = 4
+      this.levelData = Array.from({length: row}, () => Array.from({length: column}, () => 0))
+      this.levelData.forEach((ary, i) => {
+        ary.forEach((value, j) => {
+          this.levelData[i][j] = 1 - j * 0.1
+        })
+      })
+      // console.log(this.levelData)
     },
     setTableColorIndexAry (value, i, j) { // i是行，j是列
       // console.log('行: ' + i + ' ' + '列： ' + j)
@@ -81,18 +91,6 @@ export default {
       }
       return result
     },
-    getLevelValueData (host) {
-      this.axios.get('/exchangeValueLevel').then(function (res) {
-        // host.levelData = res.data
-        res.data.forEach(ary => {
-          let temp = []
-          ary.forEach(value => {
-            temp.push(Number.parseFloat(value)) // 字符串转换为float类型
-          })
-          host.levelData.push(temp)
-        })
-      })
-    },
     getTableDataDesc (index) {
       if (index < 3) {
         return
@@ -103,7 +101,7 @@ export default {
       this.headerClickAry[index - 1] = true
     },
     getTableData (host, param) {
-      this.axios.get('/exchangeRate/' + param).then(function (res) {
+      this.axios.get('/closeMax/' + param).then(function (res) {
         host.tableData = []
         res.data.forEach(element => {
           let rowData = [] // 一行数据组成一个数组
