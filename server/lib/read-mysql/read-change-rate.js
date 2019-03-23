@@ -22,6 +22,21 @@ function readChangeRate (callback) {
   })
 }
 
+// readChangeRateOfCode('000001', data => {
+//   console.log(data)
+// })
+function readChangeRateOfCode (code, callback) {
+  sqlSentence = 'SELECT * FROM change_rate WHERE code = ' + code
+  connection.query(sqlSentence, function (err, result) {
+    if (err) {
+      console.log(sqlSentence)
+      return 0
+    } else {
+    }
+    callback(result[0])
+  })
+}
+
 function readChangeRateLimit (order, limit, callback) {
   sqlSentence = 'SELECT * FROM change_rate ORDER BY ' + order + ' DESC LIMIT ' + limit
   connection.query(sqlSentence, function (err, result) {
@@ -90,5 +105,6 @@ module.exports = {
   readChangeRateLimit,
   readChangeRateAverage,
   readChangeRateAvgLimit,
-  readChangeRateRanking
+  readChangeRateRanking,
+  readChangeRateOfCode
 }

@@ -63,6 +63,12 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           res.send(data)
         })
       })
+      app.get('/changeRateCode/*', (req, res) => {
+        let params = req.params[0]
+        readChange.readChangeRateOfCode(params, function(data) {
+          res.send(data)
+        })
+      })
     },
     clientLogLevel: 'warning',
     historyApiFallback: {
