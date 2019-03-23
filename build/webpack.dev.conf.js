@@ -34,14 +34,74 @@ const devWebpackConfig = merge(baseWebpackConfig, {
           res.send(data)
         })
       })
+      app.get('/changeRateCode/*', (req, res) => {
+        let params = req.params[0]
+        readChange.readChangeRateOfCode(params, function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/changeRateMaxCode/*', (req, res) => {
+        let params = req.params[0]
+        readChange.readChangeRateMax(params, function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/changeRateMinCode/*', (req, res) => {
+        let params = req.params[0]
+        readChange.readChangeRateMin(params, function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/changeRateAvgCode/*', (req, res) => {
+        let params = req.params[0]
+        readChange.readChangeRateAverage(params, function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/changeRateRankingCode/*', (req, res) => {
+        let params = req.params[0]
+        readChange.readChangeRateRanking(params, function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/exchangeValueLevel', (req, res) => {
+        readExchange.readExchangeRateLevel(function(data) {
+          res.send(data)
+        })
+      })
       app.get('/exchangeRate/*', (req, res) => {
         let params = req.params[0].split('-')
         readExchange.readExchangeRateLimit(params[0],params[1], function(data) {
             res.send(data)
           })
       })
-      app.get('/exchangeValueLevel', (req, res) => {
-        readExchange.readExchangeRateLevel(function(data) {
+      app.get('/exchangeRateCode/*', (req, res) => {
+        let params = req.params[0]
+        readExchange.readExchangeRateOfCode(params, function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/exchangeRateMaxCode/*', (req, res) => {
+        let params = req.params[0]
+        readExchange.readExchangeRateMax(params, function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/exchangeRateMinCode/*', (req, res) => {
+        let params = req.params[0]
+        readExchange.readExchangeRateMin(params, function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/exchangeRateAvgCode/*', (req, res) => {
+        let params = req.params[0]
+        readExchange.readExchangeRateAverage(params, function(data) {
+          res.send(data)
+        })
+      })
+      app.get('/exchangeRateRankingCode/*', (req, res) => {
+        let params = req.params[0]
+        readExchange.readExchangeRateRanking(params, function(data) {
           res.send(data)
         })
       })
@@ -60,12 +120,6 @@ const devWebpackConfig = merge(baseWebpackConfig, {
       app.get('/closeAverage/*', (req, res) => {
         let params = req.params[0].split('-')
         readCloseAverage.readCloseAverageLimit(params[0],params[1], function(data) {
-          res.send(data)
-        })
-      })
-      app.get('/changeRateCode/*', (req, res) => {
-        let params = req.params[0]
-        readChange.readChangeRateOfCode(params, function(data) {
           res.send(data)
         })
       })
